@@ -24,9 +24,10 @@ jobs:
     - name: Ejecutar el Scraper para armar el HTML
       run: python fpt.py
 
-    - name: Desplegar directamente a Netlify
-      uses: SouthAtari/deploy-netlify-action@v1.1.4
+    - name: Desplegar directamente a Netlify (Oficial)
+      uses: netlify/actions/cli@master
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
       with:
-        path: './'
-        netlify_token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        site_id: ${{ secrets.NETLIFY_SITE_ID }}
+        args: deploy --dir=. --prod
