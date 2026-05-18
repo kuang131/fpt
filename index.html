@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Agenda de Fútbol</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #333; }
+        .partido-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .partido-titulo { font-size: 1.2em; font-weight: bold; color: #2e7d32; margin-bottom: 10px; }
+        .botones-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .btn-canal { display: inline-block; padding: 8px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 0.9em; transition: background 0.2s; }
+        .btn-canal:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Partidos de Hoy</h1>
+        <div id="agenda-futbol">Cargando partidos...</div>
+    </div>
+
+    <script>
+        // Leemos el archivo JSON generado por el script de Python
+        fetch('agenda.json')
+            .then(response => response.json())
+            .then(data => {
+                const contenedor = document.getElementById('agenda-futbol');
+                contenedor.innerHTML = ''; // Limpiamos el cargando
+                
+                if (data.length === 0) {
+                    contenedor.innerHTML = '<p>No hay partidos programados por el momento.</p>';
+                    return;
+                }
+
+                // Recorremos los partidos y armamos el diseño
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'partido-card';
+
+                    const titulo = document.createElement('div');
+                    titulo.className = 'partido-titulo';
+                    titulo.innerText = item.partido;
+                    card.appendChild(titulo);
+
+                    const botonesContainer = document.createElement('div');
+                    botonesContainer.className = 'botones-container';
+
+                    item.canales.forEach(canal => {
+                        const btn = document.createElement('a');
+                        btn.className = 'btn-canal';
+                        btn.href = canal.url;
+                        btn.target = '_blank'; // Abre el reproductor en pestaña nueva
+                        btn.innerText = canal.nombre;
+                        botonesContainer.appendChild(btn);
+                    });
+
+                    card.appendChild(botonesContainer);
+                    contenedor.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar la agenda:", error);
+                document.getElementById('agenda-futbol').innerText = 'Error al cargar los partidos.';
+            });
+    </script>
+</body>
+</html>
